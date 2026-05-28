@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
+// เพิ่ม LineChart และ Line เข้ามาใน import
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList, LineChart, Line } from 'recharts';
 
 interface Stats {
   metadata: {
@@ -269,10 +270,25 @@ export default function AppDashboard() {
                     </span>
                   </div>
 
+                  {/* กราฟเส้นแสดงยอดขายย้อนหลัง 30 วันที่เพิ่มเข้ามา */}
+                  <div className="bg-white p-6 rounded-xl border border-slate-200">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">กราฟเทียบยอดขายย้อนหลังรายวัน (30 วัน)</h3>
+                    <div className="h-[250px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={predictResult.historical_trend}>
+                          <XAxis dataKey="date" hide />
+                          <YAxis />
+                          <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                          <Line type="monotone" dataKey="sales" stroke="#3b82f6" strokeWidth={3} dot={{ r: 3, fill: '#3b82f6' }} activeDot={{ r: 6, fill: '#ef4444' }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">คำแนะนำการจัดวาง (Market Basket)</p>
                     <div className="space-y-3">
-                      {predictResult.recommendations.map((item: any, idx: number) => (
+                      {predictResult.recommendations?.map((item: any, idx: number) => (
                         <div key={idx} className="bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center">
                           <p className="font-bold text-slate-800 text-sm">{item.name}</p>
                           <div className="text-right">
