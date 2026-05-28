@@ -1,18 +1,29 @@
 import xgboost as xgb
-from sklearn.metrics import mean_absolute_error
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-def train_xgboost(df):
-    X = df[['day_of_week', 'month', 'is_promo', 'sales_lag_7', 'rolling_mean_30']]
+def train_and_evaluate(df):
+    features = ['final_price', 'discount', 'month', 'dayofweek', 'is_holiday_flag', 
+                'lag_1_qty', 'lag_7_qty'] + [col for col in df.columns if 'product_taxonomies_' in col]
+    
+    X = df[features]
     y = df['qty']
     
-    split = int(len(df) * 0.8)
-    X_train, X_test = X[:split], X[split:]
-    y_train, y_test = y[:split], y[split:]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffle=False)
     
-    model = xgb.XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=5)
+    model = xgb.XGBRegressor(
+        n_estimators=200,
+        learning_rate=0.05,
+        max_depth=6,
+        random_state=42
+    )
+    
     model.fit(X_train, y_train)
     
-    preds = model.predict(X_test)
-    mae = mean_absolute_error(y_test, preds)
+    predictions = model.predict(X_test)
+    mae = mean_absolute_error(y_test, predictions)
+    # แก้ไขการคำนวณ RMSE ตรงบรรทัดนี้
+    rmse = np.sqrt(mean_squared_error(y_test, predictions))
     
-    return model, mae
+    return model, mae, rmse

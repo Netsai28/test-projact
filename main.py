@@ -1,14 +1,16 @@
-from src.data_prep import generate_data, prep_features
-from src.model import train_xgboost
+from src.data_prep import create_mock_data, process_features
+from src.model import train_and_evaluate
 
-def main():
-    df_raw = generate_data()
-    df_clean = prep_features(df_raw)
+def run_pipeline():
+    df_sales, df_product, df_promo = create_mock_data()
     
-    model, mae = train_xgboost(df_clean)
+    df_processed = process_features(df_sales, df_product, df_promo)
     
-    print(f"Model Training Completed")
-    print(f"Mean Absolute Error (MAE): {mae:.2f}")
+    model, mae, rmse = train_and_evaluate(df_processed)
+    
+    print("=== Model Training Metrics ===")
+    print(f"MAE: {mae:.4f}")
+    print(f"RMSE: {rmse:.4f}")
 
 if __name__ == "__main__":
-    main()
+    run_pipeline()
