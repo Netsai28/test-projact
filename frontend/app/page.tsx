@@ -40,8 +40,8 @@ export default function AppDashboard() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://127.0.0.1:8000/api/stats').then(res => res.json()),
-      fetch('http://127.0.0.1:8000/api/master-data').then(res => res.json())
+      fetch('https://test-project.onrender.com/api/stats').then(res => res.json()),
+      fetch('https://test-project.onrender.com/api/master-data').then(res => res.json())
     ]).then(([statsData, master]) => {
       setStats(statsData);
       setMasterData(master);
@@ -55,7 +55,7 @@ export default function AppDashboard() {
 
   useEffect(() => {
     if (form.store_id && form.target_date) {
-      fetch(`http://127.0.0.1:8000/api/weather?target_date=${form.target_date}&store_id=${form.store_id}`)
+      fetch(`https://test-project.onrender.com/api/weather?target_date=${form.target_date}&store_id=${form.store_id}`)
         .then(res => res.json())
         .then(data => setRainProb(data.rain_probability))
         .catch(console.error);
@@ -66,7 +66,7 @@ export default function AppDashboard() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/predict', {
+      const res = await fetch('https://test-project.onrender.com/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
