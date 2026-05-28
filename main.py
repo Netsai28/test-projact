@@ -1,16 +1,19 @@
-from src.data_prep import create_mock_data, process_features
-from src.model import train_and_evaluate
+from src.pipeline import RetailDataPipeline
+from src.trainer import DemandForecaster
+import logging
 
-def run_pipeline():
-    df_sales, df_product, df_promo = create_mock_data()
+def main():
+    # 1. ETL Pipeline
+    pipeline = RetailDataPipeline(data_dir="data")
+    pipeline.extract()
+    processed_data = pipeline.transform()
     
-    df_processed = process_features(df_sales, df_product, df_promo)
+    # 2. Model Training & Evaluation
+    forecaster = DemandForecaster()
+    forecaster.train_evaluate(processed_data)
     
-    model, mae, rmse = train_and_evaluate(df_processed)
-    
-    print("=== Model Training Metrics ===")
-    print(f"MAE: {mae:.4f}")
-    print(f"RMSE: {rmse:.4f}")
+    # 3. Save Artifact for API usage
+    forecaster.save()
 
 if __name__ == "__main__":
-    run_pipeline()
+    main()
